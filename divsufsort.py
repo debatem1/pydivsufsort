@@ -345,6 +345,7 @@ def test():
 	test_generalized_suffix_array_basic()
 	test_generalized_suffix_array_search_one_document()
 	test_generalized_suffix_array_search_two_documents()
+	test_null_safety()
 
 if __name__ == "__main__":
 	test()

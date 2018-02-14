@@ -130,8 +130,8 @@ class GeneralizedSuffixArray:
 	sa = None
 	text = None
 	documents = None
-    docs_names = None
-    docs_offsets = None
+	docs_names = None
+	docs_offsets = None
 
 	def __init__(self):
 		self.text = b''

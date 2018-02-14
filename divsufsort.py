@@ -120,7 +120,7 @@ class GeneralizedSuffixArray:
 		>>> sa.is_correct()
 		True
 		>> for document, index in sa.search(b'ana'):
-		...     print document, ':', index
+		...     print(document, ':', index)
 		...
 		suffix: 1
 	"""
@@ -264,20 +264,20 @@ def test_suffix_array_merge():
 	sa = SuffixArray(b"bananaban")
 	sb = SuffixArray(b"anabanana")
 	sc = sa.merge(sb)
-	#print list(sc.sa)
+	# print(list(sc.sa))
 	sc.check()
 
 def test_suffix_array_smart_merge():
 	sa = SuffixArray(b"banana")
 	sb = SuffixArray(b"banana")
-	print "Expected: ", [5, 10, 3, 1, 7, 0, 6, 9, 11, 4, 2, 8]
+	print("Expected: ", [5, 10, 3, 1, 7, 0, 6, 9, 11, 4, 2, 8])
 	sc = sa.smart_merge3(sb)
 	sc.check()
 
 def test_suffix_array_smart_merge_variable_length():
 	sa = SuffixArray(b"banana")
 	sb = SuffixArray(b"bandana")
-	print "Expected, ", [12, 5, 10, 3, 1, 7, 0, 6, 9, 11, 4, 2, 8]
+	print("Expected, ", [12, 5, 10, 3, 1, 7, 0, 6, 9, 11, 4, 2, 8])
 	sc = sa.smart_merge3(sb)
 	sc.check()
 

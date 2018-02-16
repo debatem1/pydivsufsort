@@ -17,6 +17,8 @@ import collections
 import ctypes
 import ctypes.util
 
+from bisect import bisect_right
+
 #==============================================================================#
 #                                 Thin Calls                                   #
 #==============================================================================#
@@ -128,10 +130,14 @@ class GeneralizedSuffixArray:
 	sa = None
 	text = None
 	documents = None
+	docs_names = None
+	docs_offsets = None
 
 	def __init__(self):
 		self.text = b''
 		self.documents = collections.OrderedDict()
+		self.docs_names = []
+		self.docs_offsets = [0]
 
 	def check_text_defined(self):
 		"""Checks whether the text has been defined.
@@ -158,6 +164,8 @@ class GeneralizedSuffixArray:
 		"""
 		self.documents[name] = len(document)
 		self.text += document
+		self.docs_names.append(name)
+		self.docs_offsets.append(self.docs_offsets[-1] + len(document))
 
 	def get_document_index(self, text_index):
 		"""Translates between a given text index and a document index.
@@ -169,14 +177,14 @@ class GeneralizedSuffixArray:
 		If the text is not defined, raises ValueError.
 		"""
 		self.check_text_defined()
-		current_offset = 0
-		for name, length in self.documents.items():
-			document_end = current_offset + length
-			if current_offset <= text_index < document_end:
-				document_offset = text_index - current_offset
-				return name, document_offset
-			current_offset = document_end
-		raise IndexError("Invalid text index")
+		ind = bisect_right(self.docs_offsets, text_index) - 1
+		current_offset = self.docs_offsets[ind]
+		name = self.docs_names[ind]
+		length = self.documents[name]
+		document_end = current_offset + length
+		assert current_offset <= text_index < document_end
+		document_offset = text_index - current_offset
+		return name, document_offset
 
 	def generate(self):
 		"""Generates the suffix array based on the current texts.
@@ -322,6 +330,10 @@ def test_null_safety():
 	assert(results == [('veggie', 0)])
 	results = list(gsa.search(b"aa"))
 	assert(results == [])
+	results = list(gsa.search(b"ba"))
+	assert(results == [('fruit', 0)])
+	results = list(gsa.search(b"naa"))
+	assert(results == [])
 	gsa.is_correct()
 
 def test():
@@ -333,6 +345,7 @@ def test():
 	test_generalized_suffix_array_basic()
 	test_generalized_suffix_array_search_one_document()
 	test_generalized_suffix_array_search_two_documents()
+	test_null_safety()
 
 if __name__ == "__main__":
 	test()
